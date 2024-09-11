@@ -1,0 +1,19 @@
+version: '3'
+services:
+  master:
+    image: locustio/locust
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./:/mnt/locust
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    command: -f /mnt/locust/hello.py --master -H ${TARGET_HOST}
+
+  worker:
+    image: locustio/locust
+    volumes:
+      - ./:/mnt/locust
+    environment:
+      - TARGET_HOST=${TARGET_HOST}
+    command: -f /mnt/locust/hello.py --worker --master-host master

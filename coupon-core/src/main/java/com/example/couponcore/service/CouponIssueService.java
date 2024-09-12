@@ -39,6 +39,7 @@ public class CouponIssueService {
     @Transactional
     public CouponIssue saveCouponIssue(long couponId, long userId) {
         checkAlreadyCouponIssue(couponId, userId);
+
         CouponIssue couponIssue = CouponIssue.builder()
                 .couponId(couponId)
                 .userId(userId)

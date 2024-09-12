@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "coupon_issues")
-public class CouponIssue {
+public class CouponIssue extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,6 @@ public class CouponIssue {
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime dateIssued;
-    
+
     private LocalDateTime dateUsed;
 }

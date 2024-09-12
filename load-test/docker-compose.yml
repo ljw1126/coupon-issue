@@ -7,7 +7,7 @@ services:
       - ./:/mnt/locust
     environment:
       - TARGET_HOST=${TARGET_HOST}
-    command: -f /mnt/locust/coupon-issue-v1.py --master -H ${TARGET_HOST}
+    command: -f /mnt/locust/coupon-issue-v2.py --master -H ${TARGET_HOST}
 
   worker:
     image: locustio/locust
@@ -15,4 +15,4 @@ services:
       - ./:/mnt/locust
     environment:
       - TARGET_HOST=${TARGET_HOST}
-    command: -f /mnt/locust/coupon-issue-v1.py --worker --master-host master
+    command: -f /mnt/locust/coupon-issue-v2.py --worker --master-host master

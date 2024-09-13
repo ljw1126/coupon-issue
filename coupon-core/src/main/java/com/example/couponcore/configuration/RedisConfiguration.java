@@ -1,5 +1,6 @@
 package com.example.couponcore.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -22,5 +23,10 @@ public class RedisConfiguration {
         String address = "redis://" + host + ":" + port;
         config.useSingleServer().setAddress(address);
         return Redisson.create(config);
+    }
+
+    @Bean
+    ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

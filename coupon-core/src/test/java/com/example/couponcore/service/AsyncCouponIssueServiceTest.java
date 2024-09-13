@@ -6,7 +6,7 @@ import com.example.couponcore.exception.ErrorCode;
 import com.example.couponcore.model.Coupon;
 import com.example.couponcore.model.CouponType;
 import com.example.couponcore.repository.mysql.CouponJpaRepository;
-import com.example.couponcore.repository.redis.CouponIssueRequest;
+import com.example.couponcore.repository.redis.dto.CouponIssueRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

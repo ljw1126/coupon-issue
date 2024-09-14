@@ -3,10 +3,12 @@ package com.example.couponcore.service;
 import com.example.couponcore.exception.CouponIssueException;
 import com.example.couponcore.model.Coupon;
 import com.example.couponcore.model.CouponIssue;
+import com.example.couponcore.model.event.CouponIssueCompleteEvent;
 import com.example.couponcore.repository.mysql.CouponIssueJpaRepository;
 import com.example.couponcore.repository.mysql.CouponIssueRepository;
 import com.example.couponcore.repository.mysql.CouponJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +22,14 @@ public class CouponIssueService {
     private final CouponJpaRepository couponJpaRepository;
     private final CouponIssueJpaRepository couponIssueJpaRepository;
     private final CouponIssueRepository couponIssueRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void issue(long couponId, long userId) {
         Coupon coupon = findCouponWithLock(couponId);
         coupon.issue();
         saveCouponIssue(couponId, userId);
+        publishCouponEvent(coupon);
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +63,12 @@ public class CouponIssueService {
         CouponIssue firstCouponIssue = couponIssueRepository.findFirstCouponIssue(couponId, userId);
         if (firstCouponIssue != null) {
             throw new CouponIssueException(DUPLICATED_COUPON_ISSUE, "이미 발급된 쿠폰입니다. couponId : %s , userId : %s ".formatted(couponId, userId));
+        }
+    }
+
+    private void publishCouponEvent(Coupon coupon) {
+        if (coupon.isIssueComplete()) {
+            applicationEventPublisher.publishEvent(new CouponIssueCompleteEvent(coupon.getId()));
         }
     }
 }

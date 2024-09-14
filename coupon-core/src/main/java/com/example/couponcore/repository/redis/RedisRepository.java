@@ -81,4 +81,16 @@ public class RedisRepository {
 
         return RedisScript.of(script, String.class);
     }
+
+    public Long lSize(String key) {
+        return redisTemplate.opsForList().size(key);
+    }
+
+    public String lIndex(String key, long index) {
+        return redisTemplate.opsForList().index(key, index);
+    }
+
+    public String lPop(String key) {
+        return redisTemplate.opsForList().leftPop(key);
+    }
 }

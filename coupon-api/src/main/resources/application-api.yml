@@ -4,5 +4,14 @@ spring:
 server:
   port: 8080
   tomcat:
-    threads:
-      max: 400
+    mbeanregistry:
+      enabled: true
+management:
+  metrics:
+    tags:
+      application:
+        ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

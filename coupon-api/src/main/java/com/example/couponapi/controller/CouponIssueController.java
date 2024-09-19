@@ -30,7 +30,7 @@ public class CouponIssueController {
 
     @PostMapping("/v3/issue")
     public CouponIssueResponseDto issueV3(@RequestBody CouponIssueRequestDto requestDto) {
-        couponIssueRequestService.issueRequestV1(requestDto);
+        couponIssueRequestService.issueRequestV3(requestDto);
         return new CouponIssueResponseDto(true, null);
     }
 

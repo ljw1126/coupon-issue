@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 class CouponIssueServiceTest extends TestConfig {
 
     @Autowired
-    CouponIssueService service;
+    CouponIssueService couponIssueService;
 
     @Autowired
     CouponJpaRepository couponJpaRepository;
@@ -48,7 +48,7 @@ class CouponIssueServiceTest extends TestConfig {
                 .build();
         couponIssueJpaRepository.save(couponIssue);
 
-        CouponIssueException couponIssueException = catchThrowableOfType(() -> service.saveCouponIssue(1L, 1L), CouponIssueException.class);
+        CouponIssueException couponIssueException = catchThrowableOfType(() -> couponIssueService.saveCouponIssue(1L, 1L), CouponIssueException.class);
         assertThat(couponIssueException.getErrorCode())
                 .isEqualTo(ErrorCode.DUPLICATED_COUPON_ISSUE);
     }
@@ -59,7 +59,7 @@ class CouponIssueServiceTest extends TestConfig {
         long couponId = 1L;
         long userId = 1L;
 
-        CouponIssue result = service.saveCouponIssue(couponId, userId);
+        CouponIssue result = couponIssueService.saveCouponIssue(couponId, userId);
 
         boolean isPresent = couponIssueJpaRepository.findById(result.getId()).isPresent();
         assertThat(isPresent).isTrue();
@@ -80,7 +80,7 @@ class CouponIssueServiceTest extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
-        service.issue(coupon.getId(), userId);
+        couponIssueService.issueWithLock(coupon.getId(), userId);
 
         Coupon result = couponJpaRepository.findById(coupon.getId()).get();
         assertThat(result.getIssuedQuantity()).isEqualTo(1);
@@ -104,7 +104,7 @@ class CouponIssueServiceTest extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
-        CouponIssueException couponIssueException = catchThrowableOfType(() -> service.issue(coupon.getId(), userId),
+        CouponIssueException couponIssueException = catchThrowableOfType(() -> couponIssueService.issueWithLock(coupon.getId(), userId),
                 CouponIssueException.class);
         assertThat(couponIssueException.getErrorCode())
                 .isEqualTo(ErrorCode.INVALID_COUPON_ISSUE_QUANTITY);
@@ -125,7 +125,7 @@ class CouponIssueServiceTest extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
-        CouponIssueException couponIssueException = catchThrowableOfType(() -> service.issue(coupon.getId(), userId),
+        CouponIssueException couponIssueException = catchThrowableOfType(() -> couponIssueService.issueWithLock(coupon.getId(), userId),
                 CouponIssueException.class);
         assertThat(couponIssueException.getErrorCode())
                 .isEqualTo(ErrorCode.INVALID_COUPON_ISSUE_DATE);
@@ -152,7 +152,7 @@ class CouponIssueServiceTest extends TestConfig {
                 .build();
         couponIssueJpaRepository.save(couponIssue);
 
-        CouponIssueException couponIssueException = catchThrowableOfType(() -> service.issue(coupon.getId(), userId),
+        CouponIssueException couponIssueException = catchThrowableOfType(() -> couponIssueService.issueWithLock(coupon.getId(), userId),
                 CouponIssueException.class);
         assertThat(couponIssueException.getErrorCode())
                 .isEqualTo(ErrorCode.DUPLICATED_COUPON_ISSUE);
@@ -164,7 +164,7 @@ class CouponIssueServiceTest extends TestConfig {
         long couponId = 1L;
         long userId = 1L;
 
-        CouponIssueException couponIssueException = catchThrowableOfType(() -> service.issue(couponId, userId),
+        CouponIssueException couponIssueException = catchThrowableOfType(() -> couponIssueService.issueWithLock(couponId, userId),
                 CouponIssueException.class);
         assertThat(couponIssueException.getErrorCode())
                 .isEqualTo(ErrorCode.COUPON_NOT_EXIST);

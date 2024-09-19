@@ -22,12 +22,21 @@ public class CouponIssueRequestService {
 
     public void issueRequestV1(CouponIssueRequestDto requestDto) {
         couponIssueService.issue(requestDto.couponId(), requestDto.userId());
-        logger.info("쿠폰 발급 완료. couponId : %s , userId : %s".formatted(requestDto.couponId(), requestDto.userId()));
+        printLog(requestDto);
     }
 
     public void issueRequestV2(CouponIssueRequestDto requestDto) {
         distributeLockExecutor.execute(() -> couponIssueService.issue(requestDto.couponId(), requestDto.userId()),
                 "lock_" + requestDto.couponId(), 10000, 10000);
+        printLog(requestDto);
+    }
+
+    public void issueRequestV3(CouponIssueRequestDto requestDto) {
+        couponIssueService.issueWithLock(requestDto.couponId(), requestDto.userId());
+        printLog(requestDto);
+    }
+
+    private void printLog(CouponIssueRequestDto requestDto) {
         logger.info("쿠폰 발급 완료. couponId : %s , userId : %s".formatted(requestDto.couponId(), requestDto.userId()));
     }
 

@@ -26,6 +26,13 @@ public class CouponIssueService {
 
     @Transactional
     public void issue(long couponId, long userId) {
+        Coupon coupon = findCoupon(couponId);
+        coupon.issue();
+        saveCouponIssue(couponId, userId);
+    }
+
+    @Transactional
+    public void issueWithLock(long couponId, long userId) {
         Coupon coupon = findCouponWithLock(couponId);
         coupon.issue();
         saveCouponIssue(couponId, userId);

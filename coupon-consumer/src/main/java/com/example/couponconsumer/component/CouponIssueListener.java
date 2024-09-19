@@ -30,7 +30,7 @@ public class CouponIssueListener {
         while (existCouponIssueTarget()) {
             CouponIssueRequest target = getIssueTarget();
             logger.info("발급 시작 target : %s".formatted(target));
-            couponIssueService.issue(target.couponId(), target.userId());
+            couponIssueService.issueWithLock(target.couponId(), target.userId());
             logger.info("발급 완료 target : %s".formatted(target));
             removeIssueTarget();
         }

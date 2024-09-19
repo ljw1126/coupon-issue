@@ -50,7 +50,7 @@ class CouponIssueListenerTest extends TestConfig {
         couponIssueListener.issue();
 
         verify(couponIssueService, never())
-                .issue(anyLong(), anyLong());
+                .issueWithLock(anyLong(), anyLong());
     }
 
     @DisplayName("쿠폰 발급 큐에 처리 대상이 있다면 발급한다")
@@ -65,7 +65,7 @@ class CouponIssueListenerTest extends TestConfig {
         couponIssueListener.issue();
 
         verify(couponIssueService, times(1))
-                .issue(anyLong(), anyLong());
+                .issueWithLock(anyLong(), anyLong());
     }
 
     @DisplayName("쿠폰 발급 요청 순서에 맞게 처리된다")
@@ -84,8 +84,8 @@ class CouponIssueListenerTest extends TestConfig {
         couponIssueListener.issue();
 
         InOrder inOrder = Mockito.inOrder(couponIssueService);
-        inOrder.verify(couponIssueService, times(1)).issue(couponId, userId);
-        inOrder.verify(couponIssueService, times(1)).issue(couponId, userId2);
-        inOrder.verify(couponIssueService, times(1)).issue(couponId, userId3);
+        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId);
+        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId2);
+        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId3);
     }
 }

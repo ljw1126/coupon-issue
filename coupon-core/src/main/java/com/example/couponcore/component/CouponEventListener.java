@@ -19,9 +19,15 @@ public class CouponEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void issueComplete(CouponIssueCompleteEvent event) {
-        logger.info("issue complete. cache refresh start couponId : %s".formatted(event.couponId()));
+        printLog("issue complete. cache refresh start couponId : %s", event.couponId());
         couponCacheService.putCouponCache(event.couponId());
         couponCacheService.putCouponLocalCache(event.couponId());
-        logger.info("issue complete. cache refresh end couponId : %s".formatted(event.couponId()));
+        printLog("issue complete. cache refresh end couponId : %s", event.couponId());
+    }
+
+    private void printLog(String message, long couponId) {
+        if (logger.isInfoEnabled()) {
+            logger.info(message.formatted(couponId));
+        }
     }
 }

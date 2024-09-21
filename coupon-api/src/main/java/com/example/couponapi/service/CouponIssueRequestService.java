@@ -4,6 +4,7 @@ import com.example.couponapi.controller.dto.CouponIssueRequestDto;
 import com.example.couponcore.component.DistributeLockExecutor;
 import com.example.couponcore.service.AsyncCouponIssueService;
 import com.example.couponcore.service.AsyncCouponIssueServiceV2;
+import com.example.couponcore.service.CouponIssueProcessor;
 import com.example.couponcore.service.CouponIssueService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,25 +20,28 @@ public class CouponIssueRequestService {
     private final DistributeLockExecutor distributeLockExecutor;
     private final AsyncCouponIssueService asyncCouponIssueService;
     private final AsyncCouponIssueServiceV2 asyncCouponIssueServiceV2;
+    private final CouponIssueProcessor couponIssueProcessor;
 
     public void issueRequestV1(CouponIssueRequestDto requestDto) {
-        couponIssueService.issue(requestDto.couponId(), requestDto.userId());
+        couponIssueProcessor.issue(requestDto.couponId(), requestDto.userId());
         printLog(requestDto);
     }
 
     public void issueRequestV2(CouponIssueRequestDto requestDto) {
-        distributeLockExecutor.execute(() -> couponIssueService.issue(requestDto.couponId(), requestDto.userId()),
+        distributeLockExecutor.execute(() -> couponIssueProcessor.issue(requestDto.couponId(), requestDto.userId()),
                 "lock_" + requestDto.couponId(), 10000, 10000);
         printLog(requestDto);
     }
 
     public void issueRequestV3(CouponIssueRequestDto requestDto) {
-        couponIssueService.issueWithLock(requestDto.couponId(), requestDto.userId());
+        couponIssueProcessor.issueWithLock(requestDto.couponId(), requestDto.userId());
         printLog(requestDto);
     }
 
     private void printLog(CouponIssueRequestDto requestDto) {
-        logger.info("쿠폰 발급 완료. couponId : %s , userId : %s".formatted(requestDto.couponId(), requestDto.userId()));
+        if (logger.isInfoEnabled()) {
+            logger.info("쿠폰 발급 완료. couponId : %s , userId : %s".formatted(requestDto.couponId(), requestDto.userId()));
+        }
     }
 
     public void asyncIssueRequest(CouponIssueRequestDto requestDto) {

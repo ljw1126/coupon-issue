@@ -2,7 +2,7 @@ package com.example.couponconsumer.component;
 
 import com.example.couponconsumer.TestConfig;
 import com.example.couponcore.repository.redis.RedisRepository;
-import com.example.couponcore.service.CouponIssueService;
+import com.example.couponcore.service.CouponIssueProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class CouponIssueListenerTest extends TestConfig {
     RedisRepository redisRepository;
 
     @MockBean
-    CouponIssueService couponIssueService;
+    CouponIssueProcessor couponIssueProcessor;
 
     @BeforeEach
     void setUp() {
@@ -49,7 +49,7 @@ class CouponIssueListenerTest extends TestConfig {
     void issue() throws JsonProcessingException {
         couponIssueListener.issue();
 
-        verify(couponIssueService, never())
+        verify(couponIssueProcessor, never())
                 .issueWithLock(anyLong(), anyLong());
     }
 
@@ -64,7 +64,7 @@ class CouponIssueListenerTest extends TestConfig {
 
         couponIssueListener.issue();
 
-        verify(couponIssueService, times(1))
+        verify(couponIssueProcessor, times(1))
                 .issueWithLock(anyLong(), anyLong());
     }
 
@@ -83,9 +83,9 @@ class CouponIssueListenerTest extends TestConfig {
 
         couponIssueListener.issue();
 
-        InOrder inOrder = Mockito.inOrder(couponIssueService);
-        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId);
-        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId2);
-        inOrder.verify(couponIssueService, times(1)).issueWithLock(couponId, userId3);
+        InOrder inOrder = Mockito.inOrder(couponIssueProcessor);
+        inOrder.verify(couponIssueProcessor, times(1)).issueWithLock(couponId, userId);
+        inOrder.verify(couponIssueProcessor, times(1)).issueWithLock(couponId, userId2);
+        inOrder.verify(couponIssueProcessor, times(1)).issueWithLock(couponId, userId3);
     }
 }

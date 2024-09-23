@@ -9,7 +9,7 @@
 ## Tech Stack
 
 **Infra** 
-AWS EC2 / RDS / ElasticCache
+AWS EC2, RDS, ElasticCache, VPC, Subnet
 
 **Server** 
 Java 17, Spring Boot 3.3.3, JPA, QueryDsl
@@ -27,7 +27,7 @@ JUnit5, Locust, Gradle 8.1, Docker, SonarQube, Git, Postman
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/flow.png?raw=true"/>
 
 **쿠폰 발급 요청 시나리오(coupon-api)**
-① 쿠폰 정책 조회 (Coupon) 및 유효기간 확인 -- 로컬 캐시, Redis 캐시
+① 쿠폰 정책 조회(Coupon) 및 유효기간 확인 -- 로컬 캐시, Redis 캐시
 ② 쿠폰 중복 발급 요청 여부 확인 (SISMEMBER) -- RedisScript ② ~ ⑤ 처리
 ③ 수량 조회 (SCARD) 및 발급 가능 여부 검증
 ④ 요청 추가 (SADD)
@@ -35,11 +35,11 @@ JUnit5, Locust, Gradle 8.1, Docker, SonarQube, Git, Postman
 
 **쿠폰 발급 처리 시나리오(coupon-consumer)**
  ① 대기열 큐 데이터 확인 -- 스프링 스케쥴러 사용
- ② 대기열 첫번째 데이터 조회 (lIndex)
+ ② 대기열 첫번째 데이터 조회 (LIndex)
  ③ 쿠폰 정책 조회(Coupon), 발급 수량 +1 
  ④ 쿠폰 중복 발급 이력 조회, 발급 이력 저장 
- ⑤ CouponIssueCompleteEvent 발행, Redis/로컬 캐시 갱신
- ⑥ 대기열 첫번째 데이터 삭제 (lPop) 
+ ⑤ CouponIssueCompleteEvent 발행, Redis 글로벌 캐시와 로컬 캐시 갱신
+ ⑥ 대기열 첫번째 데이터 삭제 (LPop) 
 
 ## Web Sequence Diagram
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/websequencediagrams/coupon-issue%20.png?raw=true"/>

@@ -9,37 +9,44 @@
 ## Tech Stack
 
 **Infra** 
+<br/>
 AWS EC2, RDS, ElasticCache, VPC, Subnet
 
 **Server** 
+<br/>
 Java 17, Spring Boot 3.3.3, JPA, QueryDsl
 
 **Database**
+<br/>
 MySQL 8.0, H2, Redis
 
 **Monitoring**
+<br/>
 AWS CloudWatch, Spring Actuator, Prometheus, Grafana
 
 **Etc** 
+<br/>
 JUnit5, Locust, Gradle 8.1, Docker, SonarQube, Git, Postman
 
 ## Architecture
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/flow.png?raw=true"/>
 
 **쿠폰 발급 요청 시나리오(coupon-api)**
-① 쿠폰 정책 조회(Coupon) 및 유효기간 확인 -- 로컬 캐시, Redis 캐시
-② 쿠폰 중복 발급 요청 여부 확인 (SISMEMBER) -- RedisScript ② ~ ⑤ 처리
-③ 수량 조회 (SCARD) 및 발급 가능 여부 검증
-④ 요청 추가 (SADD)
-⑤ 쿠폰 발급 대기열 추가 (RPUSH)
+<br/>
+① 쿠폰 정책 조회(Coupon) 및 유효기간 확인 -- 로컬 캐시, Redis 캐시<br/>
+② 쿠폰 중복 발급 요청 여부 확인 (SISMEMBER) -- RedisScript ② ~ ⑤ 처리<br/>
+③ 수량 조회 (SCARD) 및 발급 가능 여부 검증<br/>
+④ 요청 추가 (SADD)<br/>
+⑤ 쿠폰 발급 대기열 추가 (RPUSH)</br>
 
-**쿠폰 발급 처리 시나리오(coupon-consumer)**
- ① 대기열 큐 데이터 확인 -- 스프링 스케쥴러 사용
- ② 대기열 첫번째 데이터 조회 (LIndex)
- ③ 쿠폰 정책 조회(Coupon), 발급 수량 +1 
- ④ 쿠폰 중복 발급 이력 조회, 발급 이력 저장 
- ⑤ CouponIssueCompleteEvent 발행, Redis 글로벌 캐시와 로컬 캐시 갱신
- ⑥ 대기열 첫번째 데이터 삭제 (LPop) 
+**쿠폰 발급 처리 시나리오(coupon-consumer)** 
+</br>
+① 대기열 큐 데이터 확인 -- 스프링 스케쥴러 사용<br/>
+② 대기열 첫번째 데이터 조회 (LIndex) <br/>
+③ 쿠폰 정책 조회(Coupon), 발급 수량 +1  <br/>
+④ 쿠폰 중복 발급 이력 조회, 발급 이력 저장 <br/>
+⑤ CouponIssueCompleteEvent 발행, Redis 글로벌 캐시와 로컬 캐시 갱신<br/>
+⑥ 대기열 첫번째 데이터 삭제 (LPop) <br/>
 
 ## Web Sequence Diagram
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/websequencediagrams/coupon-issue%20.png?raw=true"/>
@@ -116,23 +123,29 @@ $ tail -f app.log
 ## Load Test Result
 
 **AWS 스펙** 
+<br/>
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/aws/spec.png?raw=true"/>
 <br/>
 
 **Load Test** 
-\- 수행 시간 : 30s 
-\- RPS : **5107.21** (*목표치 달성)
+<br/>
+\- 수행 시간 : 30s <br/>
+\- RPS : **5107.21** (*목표치 달성) <br/>
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/aws/load-test-result1.png?raw=true"/>
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/aws/load-test-result2.png?raw=true"/>
 <br/>
 
 **AWS CloudWatch**
+<br/>
 모니터링 결과 **redis와 mysql은 더 많은 트래픽을 받을 수 있는 상태** 확인
+<br/>
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/aws/cloudwatch.png?raw=true"/>
 <br/>
 
 **Grafana**
+<br/>
 모니터링 결과 coupon-api 서버 **scale-out시 추가 트래픽 처리 가능성** 확인
+<br/>
 <img src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/aws/grafana.png?raw=true"/>
 
 

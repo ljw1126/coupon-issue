@@ -9,11 +9,20 @@ import com.example.couponcore.repository.mysql.CouponJpaRepository;
 import com.example.couponcore.repository.redis.dto.CouponIssueRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -24,7 +33,33 @@ import static com.example.couponcore.util.CouponRedisUtils.getIssueRequestQueueK
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+@Testcontainers
 class AsyncCouponIssueServiceV2Test extends TestConfig {
+
+    @Container
+    private static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.3")
+            .withDatabaseName("coupon")
+            .withUsername("tester")
+            .withPassword("1234")
+            .withUrlParam("serverTimezone", "UTC")
+            .withUrlParam("useSSL", "false")
+            .withUrlParam("allowPublicKeyRetrieval", "true");
+
+    @Container
+    private static final GenericContainer<?> redisContainer = new GenericContainer<>("redis:7.2-alpine")
+            .withExposedPorts(6379);
+
+    @DynamicPropertySource
+    private static void setDatasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mySQLContainer::getUsername);
+        registry.add("spring.datasource.password", mySQLContainer::getPassword);
+        registry.add("spring.jpa.show-sql", () -> true);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
+
+        registry.add("spring.data.redis.port", () -> redisContainer.getMappedPort(6379));
+    }
+
     @Autowired
     AsyncCouponIssueServiceV2 asyncCouponIssueServiceV2;
 
@@ -37,12 +72,18 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    @Qualifier("localCacheManager")
+    CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
         Collection<String> redisKey = redisTemplate.keys("*");
         if (redisKey != null && !redisKey.isEmpty()) {
             redisTemplate.delete(redisKey);
         }
+
+        cacheManager.getCache("coupon").clear();
     }
 
     @DisplayName("쿠폰 발급 - 쿠폰이 존재하지 않는다면 예외를 반환한다")
@@ -175,5 +216,10 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         String savedIssueRequest = redisTemplate.opsForList().leftPop(getIssueRequestQueueKey());
         CouponIssueRequest couponIssueRequest = new CouponIssueRequest(coupon.getId(), userId);
         assertThat(objectMapper.writeValueAsString(couponIssueRequest)).isEqualTo(savedIssueRequest);
+    }
+
+    @AfterEach
+    void tearDown() {
+        couponJpaRepository.deleteAllInBatch();
     }
 }

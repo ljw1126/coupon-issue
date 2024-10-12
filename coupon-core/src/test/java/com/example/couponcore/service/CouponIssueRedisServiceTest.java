@@ -6,11 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Collection;
 import java.util.stream.IntStream;
@@ -19,17 +14,7 @@ import static com.example.couponcore.util.CouponRedisUtils.getIssueRequestKey;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@Testcontainers
 class CouponIssueRedisServiceTest extends TestConfig {
-
-    @Container
-    private static final GenericContainer<?> redisContainer = new GenericContainer<>("redis:7.2-alpine")
-            .withExposedPorts(6379);
-
-    @DynamicPropertySource
-    private static void setDatasourceProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.redis.port", () -> redisContainer.getMappedPort(6379));
-    }
 
     @Autowired
     CouponIssueRedisService couponIssueRedisService;

@@ -6,9 +6,7 @@ import com.example.couponcore.exception.ErrorCode;
 import com.example.couponcore.model.Coupon;
 import com.example.couponcore.model.CouponType;
 import com.example.couponcore.repository.mysql.CouponJpaRepository;
-import com.example.couponcore.repository.redis.dto.CouponIssueRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,14 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
+import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.Message;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.IntStream;
 
 import static com.example.couponcore.util.CouponRedisUtils.getIssueRequestKey;
-import static com.example.couponcore.util.CouponRedisUtils.getIssueRequestQueueKey;
+import static com.example.couponcore.utils.MyAssertions.assertCouponIssueEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
@@ -39,11 +39,11 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
     CouponJpaRepository couponJpaRepository;
 
     @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
     @Qualifier("localCacheManager")
     CacheManager cacheManager;
+
+    @Autowired
+    private OutputDestination outputDestination;
 
     @BeforeEach
     void setUp() {
@@ -53,6 +53,7 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         }
 
         cacheManager.getCache("coupon").clear();
+        outputDestination.clear();
     }
 
     @DisplayName("쿠폰 발급 - 쿠폰이 존재하지 않는다면 예외를 반환한다")
@@ -162,7 +163,7 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         assertThat(isMember).isTrue();
     }
 
-    @DisplayName("쿠폰 발급 - 쿠폰 발급 요청이 성공하면 쿠폰 발급 queue에 적재된다.")
+    @DisplayName("쿠폰 발급 - 쿠폰 발급 요청이 성공하면 redis set 추가와 메시지 이벤트 발송한다")
     @Test
     void issue6() throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.now();
@@ -182,9 +183,8 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         Boolean isMember = redisTemplate.opsForSet().isMember(getIssueRequestKey(coupon.getId()), String.valueOf(userId));
         assertThat(isMember).isTrue();
 
-        String savedIssueRequest = redisTemplate.opsForList().leftPop(getIssueRequestQueueKey());
-        CouponIssueRequest couponIssueRequest = new CouponIssueRequest(coupon.getId(), userId);
-        assertThat(objectMapper.writeValueAsString(couponIssueRequest)).isEqualTo(savedIssueRequest);
+        final Message<byte[]> received = outputDestination.receive(1000, "coupon-issue-0");
+        assertCouponIssueEvent(received, coupon.getId(), userId);
     }
 
     @AfterEach

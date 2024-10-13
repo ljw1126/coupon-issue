@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
@@ -38,12 +40,18 @@ class AsyncCouponIssueServiceTest extends TestConfig {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    @Qualifier("localCacheManager")
+    CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
         Collection<String> redisKey = redisTemplate.keys("*");
         if (redisKey != null && !redisKey.isEmpty()) {
             redisTemplate.delete(redisKey);
         }
+
+        cacheManager.getCache("coupon").clear();
     }
 
     @DisplayName("쿠폰 발급 - 쿠폰이 존재하지 않는다면 예외를 반환한다")

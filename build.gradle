@@ -53,8 +53,24 @@ subprojects {
         annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
         annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
-        implementation("org.springframework.boot:spring-boot-starter-actuator")
-        implementation("io.micrometer:micrometer-registry-prometheus")
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
+
+        // test container
+        testImplementation(platform('org.testcontainers:testcontainers-bom:1.17.5'))
+        testImplementation 'org.testcontainers:testcontainers'
+        testImplementation 'org.testcontainers:junit-jupiter'
+        testImplementation 'org.testcontainers:mysql'
+
+        // kafka
+        implementation 'org.springframework.cloud:spring-cloud-stream'
+        testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.1'
+        }
     }
 
     tasks.test {

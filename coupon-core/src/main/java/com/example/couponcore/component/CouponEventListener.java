@@ -1,7 +1,7 @@
 package com.example.couponcore.component;
 
-import com.example.couponcore.model.event.CouponIssueCompleteEvent;
 import com.example.couponcore.service.CouponCacheService;
+import com.example.couponcore.service.event.CouponIssueCompleteEvent;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

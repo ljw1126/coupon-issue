@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+@Deprecated
 @RequiredArgsConstructor
 @EnableScheduling
 @Component
@@ -44,14 +45,17 @@ public class CouponIssueListener {
         }
     }
 
+    @Deprecated
     private boolean existCouponIssueTarget() {
         return redisRepository.lSize(issueRequestQueueKey) > 0;
     }
 
+    @Deprecated
     private CouponIssueRequest getIssueTarget() throws JsonProcessingException {
         return objectMapper.readValue(redisRepository.lIndex(issueRequestQueueKey, 0L), CouponIssueRequest.class);
     }
 
+    @Deprecated
     private void removeIssueTarget() {
         redisRepository.lPop(issueRequestQueueKey);
     }

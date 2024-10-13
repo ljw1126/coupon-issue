@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 @TestPropertySource(properties = "spring.config.name=application-core")
 @SpringBootTest(classes = {CouponCoreConfiguration.class})
-public class TestConfig {
+public class TestConfig extends MyTestContainers {
 }

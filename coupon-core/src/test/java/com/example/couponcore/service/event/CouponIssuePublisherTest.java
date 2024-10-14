@@ -1,6 +1,7 @@
 package com.example.couponcore.service.event;
 
 import com.example.couponcore.CouponCoreConfiguration;
+import com.example.couponcore.utils.KafkaOutputDestination;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,17 +9,34 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.messaging.Message;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static com.example.couponcore.utils.MyAssertions.assertCouponIssueEvent;
 
+@Testcontainers
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"spring.config.name=application-core"})
 @SpringBootTest(classes = CouponCoreConfiguration.class)
 class CouponIssuePublisherTest {
+
+    @Container
+    static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"))
+            .withKraft()
+            .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", "true")
+            .withEnv("KAFKA_CREATE_TOPICS", "coupon");
+
+    @DynamicPropertySource
+    private static void setDatasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.cloud.stream.kafka.binder.brokers", kafkaContainer::getBootstrapServers);
+    }
 
     @MockBean
     private RedissonClient redissonClient; // redis connection fail when @ComponentScan
@@ -27,7 +45,7 @@ class CouponIssuePublisherTest {
     CouponIssuePublisher sut; // system under test: 테스트 대상 시스템
 
     @Autowired
-    OutputDestination outputDestination;
+    KafkaOutputDestination outputDestination;
 
     @DisplayName("CouponIssueEvent 객체를 publish 하면 메시지가 발행된다")
     @Test

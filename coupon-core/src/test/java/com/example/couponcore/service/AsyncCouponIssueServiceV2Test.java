@@ -6,6 +6,7 @@ import com.example.couponcore.exception.ErrorCode;
 import com.example.couponcore.model.Coupon;
 import com.example.couponcore.model.CouponType;
 import com.example.couponcore.repository.mysql.CouponJpaRepository;
+import com.example.couponcore.utils.KafkaOutputDestination;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
-import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
 
@@ -43,7 +43,7 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
     CacheManager cacheManager;
 
     @Autowired
-    private OutputDestination outputDestination;
+    private KafkaOutputDestination outputDestination;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +53,7 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         }
 
         cacheManager.getCache("coupon").clear();
-        outputDestination.clear();
+        //outputDestination.clear();
     }
 
     @DisplayName("쿠폰 발급 - 쿠폰이 존재하지 않는다면 예외를 반환한다")

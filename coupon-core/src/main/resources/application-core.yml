@@ -31,6 +31,18 @@ spring:
     redis:
       host: localhost
       port: 6379
+  cloud:
+    stream:
+      bindings:
+        coupon-issue-0:
+          destination: coupon
+          content-type: application/json
+      kafka:
+        bindings:
+          coupon-issue-0:
+            producer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.LongSerializer
 ---
 spring:
   config:

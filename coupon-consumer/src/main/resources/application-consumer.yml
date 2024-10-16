@@ -1,6 +1,18 @@
 spring:
   application:
     name: coupon-api
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      bootstrap-servers: localhost:9092
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: coupon-issue-0
+    properties:
+        spring.json.trusted.packages: '*'
+test:
+  topic: coupon
 server:
   port: 8081
 management:

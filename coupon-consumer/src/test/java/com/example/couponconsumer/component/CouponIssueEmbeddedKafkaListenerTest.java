@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@EmbeddedKafka(partitions = 1, topics = {"coupon"}, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, topics = {"coupon"}, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
 @SpringBootTest
 @TestPropertySource(properties = "spring.config.name=application-consumer")
 class CouponIssueEmbeddedKafkaListenerTest {
@@ -78,7 +78,7 @@ class CouponIssueEmbeddedKafkaListenerTest {
 
     @DisplayName("쿠폰 발급 요청에 맞게 처리된다")
     @Test
-    void test2() throws InterruptedException {
+    void test2() {
         long couponId = 1L;
         long userId1 = 1L;
         long userId2 = 2L;
@@ -110,7 +110,7 @@ class CouponIssueEmbeddedKafkaListenerTest {
         @Bean
         public ProducerFactory<Long, CouponIssueKafkaEvent> producerFactory() {
             Map<String, Object> configProps = new HashMap<>();
-            configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+            configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9094");
             configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
             configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
             return new DefaultKafkaProducerFactory<>(configProps);

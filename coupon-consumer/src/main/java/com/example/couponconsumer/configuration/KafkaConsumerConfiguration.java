@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfiguration {
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String BOOTSTRAP_SERVERS;
 
     @Value("${spring.kafka.consumer.auto-offset-reset}")

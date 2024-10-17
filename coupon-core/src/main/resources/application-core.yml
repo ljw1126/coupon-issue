@@ -14,14 +14,24 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   data:
     redis:
       host: localhost
       port: 6380
+  cloud:
+    stream:
+      bindings:
+        coupon-issue-0:
+          destination: coupon
+          content-type: application/json
+      kafka:
+        bindings:
+          coupon-issue-0:
+            producer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.LongSerializer
+  kafka:
+    bootstrap-servers: localhost:9094
 ---
 spring:
   config:
@@ -64,3 +74,17 @@ spring:
     redis:
       host: PROD_URL
       port: 6380
+  cloud:
+    stream:
+      bindings:
+        coupon-issue-0:
+          destination: coupon
+          content-type: application/json
+      kafka:
+        bindings:
+          coupon-issue-0:
+            producer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.LongSerializer
+  kafka:
+    bootstrap-servers: PROD_URL:9094

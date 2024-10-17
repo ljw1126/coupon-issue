@@ -24,6 +24,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, topics = {"coupon"}, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
 @SpringBootTest
 @TestPropertySource(properties = "spring.config.name=application-consumer")

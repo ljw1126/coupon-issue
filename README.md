@@ -1,4 +1,7 @@
 # 선착순 쿠폰 발급 시스템
+<img style="position:left" src="https://github.com/ljw1126/user-content/blob/master/coupon-issue/discount-coupon.png?raw=true"/>
+<br/>
+
 
 ## Requirements
 \- 쿠폰은 유효 기간 내에 발급이 가능합니다. <br/>

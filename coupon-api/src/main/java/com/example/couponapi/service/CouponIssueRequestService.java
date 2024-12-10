@@ -5,7 +5,6 @@ import com.example.couponcore.component.DistributeLockExecutor;
 import com.example.couponcore.service.AsyncCouponIssueService;
 import com.example.couponcore.service.AsyncCouponIssueServiceV2;
 import com.example.couponcore.service.CouponIssueProcessor;
-import com.example.couponcore.service.CouponIssueService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class CouponIssueRequestService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final CouponIssueService couponIssueService;
     private final DistributeLockExecutor distributeLockExecutor;
     private final AsyncCouponIssueService asyncCouponIssueService;
     private final AsyncCouponIssueServiceV2 asyncCouponIssueServiceV2;

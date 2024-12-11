@@ -1,5 +1,7 @@
 package com.example.couponapi.controller;
 
+import com.epages.restdocs.apispec.ResourceDocumentation;
+import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.example.couponapi.controller.dto.CouponIssueRequestDto;
 import com.example.couponapi.service.CouponIssueRequestService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -14,20 +16,19 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.stream.Stream;
 
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("restDocs")
@@ -46,31 +47,41 @@ class CouponIssueControllerTest {
 
     @ParameterizedTest
     @MethodSource("couponIssueProvider")
-    void couponIssueTest(String endPoint, String identifier) throws Exception {
+    void couponIssueTest(String endPoint, String identifier, String summary, String tag) throws Exception {
         doNothing().when(couponIssueRequestService).issueRequestV1(any(CouponIssueRequestDto.class));
 
         CouponIssueRequestDto couponIssueRequestDto = new CouponIssueRequestDto(1L, 1L);
 
-        mockMvc.perform(post(endPoint)
+        mockMvc.perform(RestDocumentationRequestBuilders.post(endPoint)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(couponIssueRequestDto))
                 ).andExpect(status().isOk())
                 .andDo(document(identifier,
-                        requestFields(
-                                fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
-                                fieldWithPath("couponId").description("쿠폰 아이디").type(JsonFieldType.NUMBER)
-                        ),
-                        responseFields(
-                                fieldWithPath("isSuccess").description("성공 여부").type(JsonFieldType.BOOLEAN)
-                        )));
+                        Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+                        Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+                        ResourceDocumentation.resource(
+                                ResourceSnippetParameters.builder()
+                                        .summary(summary)
+                                        .tag(tag)
+                                        .description("쿠폰 신청")
+                                        .requestFields(
+                                                PayloadDocumentation.fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
+                                                PayloadDocumentation.fieldWithPath("couponId").description("쿠폰 아이디").type(JsonFieldType.NUMBER)
+                                        )
+                                        .responseFields(
+                                                PayloadDocumentation.fieldWithPath("isSuccess").description("성공 여부").type(JsonFieldType.BOOLEAN)
+                                        )
+                                        .build()
+                        )
+                ));
     }
 
     static Stream<Arguments> couponIssueProvider() {
         return Stream.of(
-                Arguments.arguments("/v1/issue", "issueV1"),
-                Arguments.arguments("/v2/issue", "issueV2"),
-                Arguments.arguments("/v3/issue", "issueV3"),
-                Arguments.arguments("/v2/asyncIssue", "asyncIssueV2")
+                Arguments.arguments("/v1/issue", "issueV1", "synchronized 키워드 사용", "동기 방식"),
+                Arguments.arguments("/v2/issue", "issueV2", "Redisson 분산락 사용", "동기 방식"),
+                Arguments.arguments("/v3/issue", "issueV3", "MySQL 비관적 락 사용", "동기 방식"),
+                Arguments.arguments("/v2/asyncIssue", "asyncIssueV2", "캐시(Redis + Caffeine)와 kafka 사용", "비동기 방식")
         );
     }
 

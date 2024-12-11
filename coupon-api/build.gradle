@@ -1,9 +1,12 @@
-plugins {
-    id "org.asciidoctor.jvm.convert" version "3.3.2"
+buildscript {
+    ext {
+        restdocsApiSpecVersion = '0.19.4'
+    }
 }
 
-configurations {
-    asciidoctorExt
+plugins {
+    id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+    id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 dependencies {
@@ -13,44 +16,43 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-}
+    testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
 
-ext {
-    snippetsDir = file("${layout.buildDirectory.asFile.get()}/generated-snippets")
+    swaggerUI 'org.webjars:swagger-ui:4.11.1'
 }
 
 test {
-    outputs.dir snippetsDir
     useJUnitPlatform()
 }
 
-asciidoctor.doFirst {
-    delete file("src/main/resources/static/docs")
+openapi3 {
+    server = "http://localhost:8080"
+    title = "restdocs-swagger Test API Documentation"
+    description = "Spring REST Docs with SwaggerUI"
+    version = "0.0.1"
+    format = "yaml"
 }
 
-asciidoctor {
-    configurations 'asciidoctorExt'
-    baseDirFollowsSourceDir()
-    inputs.dir snippetsDir
-    dependsOn test
+postman {
+    title = "restdocs-swagger Test API Documentation"
+    version = "0.0.1"
+    baseUrl = "http://localhost:8080"
 }
 
-task createDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("${layout.buildDirectory.asFile.get()}/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-
-bootJar {
-    dependsOn createDocument
-    from("${asciidoctor.outputDir}") {
-        into 'static/docs'
+swaggerSources {
+    sample {
+        setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
     }
 }
 
-// test > asciidoctor > createDocument > build
-build {
-    dependsOn createDocument
+bootJar {
+    dependsOn 'openapi3'
+    dependsOn 'generateSwaggerUISample'
+
+    tasks.findByName("generateSwaggerUISample").mustRunAfter("openapi3")
+
+    from("${generateSwaggerUISample.outputDir}") {
+        into 'static/docs'
+    }
 }

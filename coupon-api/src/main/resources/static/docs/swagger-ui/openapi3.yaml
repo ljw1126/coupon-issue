@@ -1,0 +1,131 @@
+openapi: 3.0.1
+info:
+  title: restdocs-swagger Test API Documentation
+  description: Spring REST Docs with SwaggerUI <br/> <a href='./swagger-ui/postman-collection.json'>postman-collection.json</a>
+  version: 0.0.1
+servers:
+- url: http://localhost:8080
+tags: []
+paths:
+  /v1/issue:
+    post:
+      tags:
+      - 동기 방식
+      summary: synchronized 키워드 사용
+      description: 쿠폰 신청
+      operationId: issueV1
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/v2-asyncIssue-1527292946'
+            examples:
+              issueV1:
+                value: "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2-asyncIssue2074483032'
+              examples:
+                issueV1:
+                  value: "{\n  \"isSuccess\" : true\n}"
+  /v2/asyncIssue:
+    post:
+      tags:
+      - 비동기 방식
+      summary: 캐시(Redis + Caffeine)와 kafka 사용
+      description: 쿠폰 신청
+      operationId: asyncIssueV2
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/v2-asyncIssue-1527292946'
+            examples:
+              asyncIssueV2:
+                value: "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2-asyncIssue2074483032'
+              examples:
+                asyncIssueV2:
+                  value: "{\n  \"isSuccess\" : true\n}"
+  /v2/issue:
+    post:
+      tags:
+      - 동기 방식
+      summary: Redisson 분산락 사용
+      description: 쿠폰 신청
+      operationId: issueV2
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/v2-asyncIssue-1527292946'
+            examples:
+              issueV2:
+                value: "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2-asyncIssue2074483032'
+              examples:
+                issueV2:
+                  value: "{\n  \"isSuccess\" : true\n}"
+  /v3/issue:
+    post:
+      tags:
+      - 동기 방식
+      summary: MySQL 비관적 락 사용
+      description: 쿠폰 신청
+      operationId: issueV3
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/v2-asyncIssue-1527292946'
+            examples:
+              issueV3:
+                value: "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/v2-asyncIssue2074483032'
+              examples:
+                issueV3:
+                  value: "{\n  \"isSuccess\" : true\n}"
+components:
+  schemas:
+    v2-asyncIssue-1527292946:
+      required:
+      - couponId
+      - userId
+      type: object
+      properties:
+        couponId:
+          type: number
+          description: 쿠폰 아이디
+        userId:
+          type: number
+          description: 유저 아이디
+    v2-asyncIssue2074483032:
+      required:
+      - isSuccess
+      type: object
+      properties:
+        isSuccess:
+          type: boolean
+          description: 성공 여부

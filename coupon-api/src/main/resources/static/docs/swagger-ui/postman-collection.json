@@ -1,0 +1,234 @@
+{
+  "info" : {
+    "name" : "restdocs-swagger Test API Documentation",
+    "version" : "0.0.1",
+    "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item" : [ {
+    "id" : "issueV1",
+    "name" : "/v1/issue",
+    "description" : "쿠폰 신청",
+    "variable" : [ ],
+    "event" : [ ],
+    "request" : {
+      "url" : {
+        "protocol" : "http",
+        "host" : "localhost",
+        "path" : "/v1/issue",
+        "port" : "8080"
+      },
+      "method" : "POST",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json;charset=UTF-8",
+        "disabled" : false
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+        "urlencoded" : [ ]
+      }
+    },
+    "response" : [ {
+      "id" : "issueV1",
+      "name" : "issueV1",
+      "originalRequest" : {
+        "url" : {
+          "protocol" : "http",
+          "host" : "localhost",
+          "path" : "/v1/issue",
+          "port" : "8080"
+        },
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Content-Type",
+          "value" : "application/json;charset=UTF-8",
+          "disabled" : false
+        } ],
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+          "urlencoded" : [ ]
+        }
+      },
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "disabled" : false
+      } ],
+      "cookie" : [ ],
+      "body" : "{\n  \"isSuccess\" : true\n}",
+      "code" : 200
+    } ]
+  }, {
+    "id" : "asyncIssueV2",
+    "name" : "/v2/asyncIssue",
+    "description" : "쿠폰 신청",
+    "variable" : [ ],
+    "event" : [ ],
+    "request" : {
+      "url" : {
+        "protocol" : "http",
+        "host" : "localhost",
+        "path" : "/v2/asyncIssue",
+        "port" : "8080"
+      },
+      "method" : "POST",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json;charset=UTF-8",
+        "disabled" : false
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+        "urlencoded" : [ ]
+      }
+    },
+    "response" : [ {
+      "id" : "asyncIssueV2",
+      "name" : "asyncIssueV2",
+      "originalRequest" : {
+        "url" : {
+          "protocol" : "http",
+          "host" : "localhost",
+          "path" : "/v2/asyncIssue",
+          "port" : "8080"
+        },
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Content-Type",
+          "value" : "application/json;charset=UTF-8",
+          "disabled" : false
+        } ],
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+          "urlencoded" : [ ]
+        }
+      },
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "disabled" : false
+      } ],
+      "cookie" : [ ],
+      "body" : "{\n  \"isSuccess\" : true\n}",
+      "code" : 200
+    } ]
+  }, {
+    "id" : "issueV2",
+    "name" : "/v2/issue",
+    "description" : "쿠폰 신청",
+    "variable" : [ ],
+    "event" : [ ],
+    "request" : {
+      "url" : {
+        "protocol" : "http",
+        "host" : "localhost",
+        "path" : "/v2/issue",
+        "port" : "8080"
+      },
+      "method" : "POST",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json;charset=UTF-8",
+        "disabled" : false
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+        "urlencoded" : [ ]
+      }
+    },
+    "response" : [ {
+      "id" : "issueV2",
+      "name" : "issueV2",
+      "originalRequest" : {
+        "url" : {
+          "protocol" : "http",
+          "host" : "localhost",
+          "path" : "/v2/issue",
+          "port" : "8080"
+        },
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Content-Type",
+          "value" : "application/json;charset=UTF-8",
+          "disabled" : false
+        } ],
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+          "urlencoded" : [ ]
+        }
+      },
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "disabled" : false
+      } ],
+      "cookie" : [ ],
+      "body" : "{\n  \"isSuccess\" : true\n}",
+      "code" : 200
+    } ]
+  }, {
+    "id" : "issueV3",
+    "name" : "/v3/issue",
+    "description" : "쿠폰 신청",
+    "variable" : [ ],
+    "event" : [ ],
+    "request" : {
+      "url" : {
+        "protocol" : "http",
+        "host" : "localhost",
+        "path" : "/v3/issue",
+        "port" : "8080"
+      },
+      "method" : "POST",
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json;charset=UTF-8",
+        "disabled" : false
+      } ],
+      "body" : {
+        "mode" : "raw",
+        "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+        "urlencoded" : [ ]
+      }
+    },
+    "response" : [ {
+      "id" : "issueV3",
+      "name" : "issueV3",
+      "originalRequest" : {
+        "url" : {
+          "protocol" : "http",
+          "host" : "localhost",
+          "path" : "/v3/issue",
+          "port" : "8080"
+        },
+        "method" : "POST",
+        "header" : [ {
+          "key" : "Content-Type",
+          "value" : "application/json;charset=UTF-8",
+          "disabled" : false
+        } ],
+        "body" : {
+          "mode" : "raw",
+          "raw" : "{\n  \"userId\" : 1,\n  \"couponId\" : 1\n}",
+          "urlencoded" : [ ]
+        }
+      },
+      "header" : [ {
+        "key" : "Content-Type",
+        "value" : "application/json",
+        "disabled" : false
+      } ],
+      "cookie" : [ ],
+      "body" : "{\n  \"isSuccess\" : true\n}",
+      "code" : 200
+    } ]
+  } ],
+  "event" : [ ],
+  "variable" : [ ]
+}

@@ -6,7 +6,6 @@ buildscript {
 
 plugins {
     id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
-    id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 dependencies {
@@ -18,8 +17,6 @@ dependencies {
 
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
-
-    swaggerUI 'org.webjars:swagger-ui:4.11.1'
 }
 
 test {
@@ -29,7 +26,7 @@ test {
 openapi3 {
     server = "http://localhost:8080"
     title = "restdocs-swagger Test API Documentation"
-    description = "Spring REST Docs with SwaggerUI"
+    description = "Spring REST Docs with SwaggerUI <br/> <a href='./swagger-ui/postman-collection.json'>postman-collection.json</a>"
     version = "0.0.1"
     format = "yaml"
 }
@@ -40,19 +37,24 @@ postman {
     baseUrl = "http://localhost:8080"
 }
 
-swaggerSources {
-    sample {
-        setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
-    }
+task copyOasToSwagger(type: Copy) {
+    delete "src/main/resources/static/swagger-ui/openapi3.yaml"
+
+    from "$buildDir/api-spec/openapi3.yaml"
+    into new File("src/main/resources/static/docs/swagger-ui/")
+
+    dependsOn 'openapi3'
 }
 
-bootJar {
-    dependsOn 'openapi3'
-    dependsOn 'generateSwaggerUISample'
+task copyPostmanCollection(type: Copy) {
+    delete "src/main/resources/static/swagger-ui/postman-collection.json"
 
-    tasks.findByName("generateSwaggerUISample").mustRunAfter("openapi3")
+    from "$buildDir/api-spec/postman-collection.json"
+    into new File("src/main/resources/static/docs/swagger-ui/")
 
-    from("${generateSwaggerUISample.outputDir}") {
-        into 'static/docs'
-    }
+    dependsOn 'postman'
+}
+
+task copySwaggerFiles {
+    dependsOn 'copyOasToSwagger', 'copyPostmanCollection'
 }

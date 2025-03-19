@@ -19,8 +19,8 @@ dependencies {
     testImplementation "com.epages:restdocs-api-spec-mockmvc:${restdocsApiSpecVersion}"
 }
 
-test {
-    useJUnitPlatform()
+bootJar {
+    enabled = true
 }
 
 openapi3 {

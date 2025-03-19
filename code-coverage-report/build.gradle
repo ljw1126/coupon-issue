@@ -1,0 +1,25 @@
+plugins {
+    id 'jacoco-report-aggregation'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    jacocoAggregation(project(":coupon-core"))
+    jacocoAggregation(project(":coupon-api"))
+    jacocoAggregation(project(":coupon-consumer"))
+}
+
+jar {
+    enabled = true
+}
+
+reporting {
+    reports{
+        testCodeCoverageReport(JacocoCoverageReport){
+            testSuiteName = "test"
+        }
+    }
+}

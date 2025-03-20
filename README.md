@@ -1,5 +1,8 @@
 # 선착순 쿠폰 발급 시스템
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ljw1126_coupon-issue&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ljw1126_coupon-issue)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=ljw1126_coupon-issue&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=ljw1126_coupon-issue)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ljw1126_coupon-issue&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=ljw1126_coupon-issue)
 
 ## 프로젝트 목표
 선착순 쿠폰 발급 시스템을 개발하며 동시성 제어, 부하 테스트 및 모니터링, 그리고 성능 개선 경험을 쌓는다. 
@@ -23,7 +26,7 @@
 >- Database: MySQL 8.0, H2, Redis <br/>
 >- Monitoring: AWS CloudWatch, Spring Actuator, Prometheus, Grafana <br/>
 >- Testing: JUnit5, Mockito, Locust, Apache JMeter, k6, Testcontainers <br/>
->- Etc: Docker, Gradle 8.1, SonarQube, Git, Postman, Spring REST Docs, Swagger-UI
+>- Etc: Docker, Gradle 8.1, SonarCloud, Git, Postman, Spring REST Docs, Swagger-UI
 <br/>
 
 ## 아키텍처

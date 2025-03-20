@@ -1,5 +1,6 @@
 package com.example.couponcore.component;
 
+import com.example.couponcore.exception.LockAcquisitionException;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -19,18 +20,23 @@ public class DistributeLockExecutor {
 
     public void execute(Runnable runnable, String lockName, long waitMs, long leaseMs) {
         RLock lock = redissonClient.getLock(lockName);
+        boolean isLocked = false;
+
         try {
-            boolean isLocked = lock.tryLock(waitMs, leaseMs, TimeUnit.MILLISECONDS);
+            isLocked = lock.tryLock(waitMs, leaseMs, TimeUnit.MILLISECONDS);
             if (!isLocked) {
-                throw new IllegalStateException("[" + lockName + "] lock 획득 실패");
+                throw new LockAcquisitionException(lockName, null);
             }
 
             runnable.run();
+
+            lock.unlock();
+            isLocked = false;
         } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            throw new LockAcquisitionException(lockName, e);
         } finally {
-            if (lock.isHeldByCurrentThread()) {
+            if (isLocked && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }

@@ -79,6 +79,12 @@ subprojects {
             xml.required.set(true)
             html.required.set(true)
         }
+
+        afterEvaluate {
+            getClassDirectories().setFrom(classDirectories.files.collect {
+                fileTree(dir: it, exclude: ["**/dto/**", "**/configuration/**", "**/exception/**"])
+            })
+        }
     }
 
     jacoco {

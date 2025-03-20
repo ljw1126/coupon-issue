@@ -15,3 +15,11 @@ dependencies {
 jar {
     enabled = true
 }
+
+testCodeCoverageReport {
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ["**/dto/**", "**/configuration/**", "**/exception/**"])
+        })
+    }
+}

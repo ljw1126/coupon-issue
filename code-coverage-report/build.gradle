@@ -16,10 +16,10 @@ jar {
     enabled = true
 }
 
-reporting {
-    reports{
-        testCodeCoverageReport(JacocoCoverageReport){
-            testSuiteName = "test"
-        }
+testCodeCoverageReport {
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ["**/dto/**", "**/configuration/**", "**/exception/**"])
+        })
     }
 }

@@ -108,3 +108,10 @@ sonar {
         property("sonar.junit.reportPaths", "build/test-results/test")
     }
 }
+
+tasks.register("codeCoverageReport") {
+    dependsOn ":code-coverage-report:testCodeCoverageReport"
+    doLast {
+        println "Code coverage report executed from code-coverage-report module."
+    }
+}

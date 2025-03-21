@@ -4,6 +4,7 @@ import com.example.couponcore.CouponCoreConfiguration;
 import com.example.couponcore.utils.KafkaOutputDestination;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import static com.example.couponcore.utils.MyAssertions.assertCouponIssueEvent;
 
+@Tag("integration")
 @Testcontainers
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"spring.config.name=application-core"})

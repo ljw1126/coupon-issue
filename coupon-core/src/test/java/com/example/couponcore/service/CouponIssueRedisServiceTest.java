@@ -3,6 +3,7 @@ package com.example.couponcore.service;
 import com.example.couponcore.TestConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
 import static com.example.couponcore.util.CouponRedisUtils.getIssueRequestKey;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
+@Tag("integration")
 class CouponIssueRedisServiceTest extends TestConfig {
 
     @Autowired

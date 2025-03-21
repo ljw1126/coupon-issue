@@ -77,7 +77,7 @@ subprojects {
         dependsOn test
         reports {
             xml.required.set(true)
-            html.required.set(true)
+            html.required.set(System.getenv("CI") == null)
         }
 
         afterEvaluate {
@@ -92,7 +92,11 @@ subprojects {
     }
 
     tasks.test {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            if(System.getenv("ACT") != null) {
+                excludeTags("integration")
+            }
+        }
     }
 
     bootJar.enabled = false

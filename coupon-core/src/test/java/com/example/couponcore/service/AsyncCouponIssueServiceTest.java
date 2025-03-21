@@ -82,8 +82,9 @@ class AsyncCouponIssueServiceTest extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
+        Long couponId = coupon.getId();
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueService.issue(coupon.getId(), 1L);
+            asyncCouponIssueService.issue(couponId, 1L);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())
@@ -104,11 +105,13 @@ class AsyncCouponIssueServiceTest extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
+        Long couponId = coupon.getId();
+
         IntStream.range(0, coupon.getTotalQuantity())
-                .forEach(userId -> redisTemplate.opsForSet().add(getIssueRequestKey(coupon.getId()), String.valueOf(userId)));
+                .forEach(userId -> redisTemplate.opsForSet().add(getIssueRequestKey(couponId), String.valueOf(userId)));
 
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueService.issue(coupon.getId(), 999L);
+            asyncCouponIssueService.issue(couponId, 999L);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())
@@ -132,8 +135,9 @@ class AsyncCouponIssueServiceTest extends TestConfig {
         long userId = 1L;
         redisTemplate.opsForSet().add(getIssueRequestKey(coupon.getId()), String.valueOf(userId));
 
+        Long couponId = coupon.getId();
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueService.issue(coupon.getId(), userId);
+            asyncCouponIssueService.issue(couponId, userId);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())

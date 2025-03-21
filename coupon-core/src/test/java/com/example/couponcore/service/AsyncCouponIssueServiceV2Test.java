@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
@@ -52,8 +53,10 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
             redisTemplate.delete(redisKey);
         }
 
-        cacheManager.getCache("coupon").clear();
-        //outputDestination.clear();
+        Cache couponCache = cacheManager.getCache("coupon");
+        if(couponCache != null) {
+            couponCache.clear();
+        }
     }
 
     @DisplayName("쿠폰 발급 - 쿠폰이 존재하지 않는다면 예외를 반환한다")
@@ -84,8 +87,9 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
+        Long couponId = coupon.getId();
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueServiceV2.issue(coupon.getId(), 1L);
+            asyncCouponIssueServiceV2.issue(couponId, 1L);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())
@@ -106,11 +110,12 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
                 .build();
         couponJpaRepository.save(coupon);
 
+        Long couponId = coupon.getId();
         IntStream.range(0, coupon.getTotalQuantity())
-                .forEach(userId -> redisTemplate.opsForSet().add(getIssueRequestKey(coupon.getId()), String.valueOf(userId)));
+                .forEach(userId -> redisTemplate.opsForSet().add(getIssueRequestKey(couponId), String.valueOf(userId)));
 
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueServiceV2.issue(coupon.getId(), 999L);
+            asyncCouponIssueServiceV2.issue(couponId, 999L);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())
@@ -132,10 +137,11 @@ class AsyncCouponIssueServiceV2Test extends TestConfig {
         couponJpaRepository.save(coupon);
 
         long userId = 1L;
-        redisTemplate.opsForSet().add(getIssueRequestKey(coupon.getId()), String.valueOf(userId));
+        Long couponId = coupon.getId();
+        redisTemplate.opsForSet().add(getIssueRequestKey(couponId), String.valueOf(userId));
 
         CouponIssueException couponIssueException = catchThrowableOfType(() -> {
-            asyncCouponIssueServiceV2.issue(coupon.getId(), userId);
+            asyncCouponIssueServiceV2.issue(couponId, userId);
         }, CouponIssueException.class);
 
         assertThat(couponIssueException.getErrorCode())

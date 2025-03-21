@@ -19,7 +19,7 @@ jar {
 testCodeCoverageReport {
     afterEvaluate {
         getClassDirectories().setFrom(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ["**/dto/**", "**/configuration/**", "**/exception/**"])
+            fileTree(dir: it, exclude: ["**/dto/*", "**/configuration/*", "**/exception/*", '**/*Application*', '**/*Configuration*'])
         })
     }
 }

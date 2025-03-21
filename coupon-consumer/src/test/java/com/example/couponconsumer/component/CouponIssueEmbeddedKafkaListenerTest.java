@@ -36,7 +36,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Tag("integration")
+@Tag("embedded")
 @ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, topics = {"coupon"}, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
 @SpringBootTest

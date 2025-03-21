@@ -93,8 +93,15 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform {
-            if(System.getenv("ACT") != null) {
-                excludeTags("integration")
+            def isAct = System.getenv("ACT") != null
+            def isCI = System.getenv("CI") != null
+
+            if(isAct) {
+                excludeTags("integration", "embedded")
+            }
+
+            if(isCI) {
+                excludeTags("embedded")
             }
         }
     }

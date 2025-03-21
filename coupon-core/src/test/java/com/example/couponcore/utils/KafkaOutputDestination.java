@@ -25,7 +25,7 @@ public class KafkaOutputDestination {
     private String brokers;
 
     public Message<byte[]> receive(int timeout, String bindingName) {
-        final ConsumerRecord<String, String> record = getOneRecord(brokers,
+        final ConsumerRecord<String, String> consumerRecord = getOneRecord(
                 bindingName,
                 "coupon",
                 0,
@@ -33,13 +33,13 @@ public class KafkaOutputDestination {
                 true,
                 Duration.ofMillis(timeout));
 
-        return convertToMessage(record);
+        return convertToMessage(consumerRecord);
     }
 
     /**
      * @see KafkaTestUtils#getOneRecord
      */
-    private ConsumerRecord<String, String> getOneRecord(String brokerAddresses, String group, String topic, int partition,
+    private ConsumerRecord<String, String> getOneRecord(String group, String topic, int partition,
                                                         boolean seekToLast, boolean commit, Duration timeout) {
 
         Map<String, Object> consumerConfig = KafkaTestUtils.consumerProps(brokers, group, "false");
@@ -55,24 +55,24 @@ public class KafkaOutputDestination {
                     consumer.seek(topicPart, consumer.position(topicPart) - 1); // 최신 offset - 1
                 }
             }
-            ConsumerRecords<String, String> records = consumer.poll(timeout);
-            ConsumerRecord<String, String> record = records.count() == 1 ? records.iterator().next() : null;
-            if (record != null && commit) {
+            ConsumerRecords<String, String> consumerRecords = consumer.poll(timeout);
+            ConsumerRecord<String, String> consumerRecord = consumerRecords.count() == 1 ? consumerRecords.iterator().next() : null;
+            if (consumerRecord != null && commit) {
                 consumer.commitSync();
             }
 
-            return record;
+            return consumerRecord;
         }
     }
 
-    private Message<byte[]> convertToMessage(ConsumerRecord<String, String> record) {
-        final byte[] payload = record.value().getBytes(StandardCharsets.UTF_8);
+    private Message<byte[]> convertToMessage(ConsumerRecord<String, String> consumerRecord) {
+        final byte[] payload = consumerRecord.value().getBytes(StandardCharsets.UTF_8);
         return MessageBuilder.withPayload(payload)
-                .setHeader(KafkaHeaders.OFFSET, record.offset())
-                .setHeader(KafkaHeaders.PARTITION, record.partition())
-                .setHeader(KafkaHeaders.TOPIC, record.topic())
-                .setHeader(KafkaHeaders.TIMESTAMP, record.timestamp())
-                .setHeader(KafkaHeaders.KEY, record.key())
+                .setHeader(KafkaHeaders.OFFSET, consumerRecord.offset())
+                .setHeader(KafkaHeaders.PARTITION, consumerRecord.partition())
+                .setHeader(KafkaHeaders.TOPIC, consumerRecord.topic())
+                .setHeader(KafkaHeaders.TIMESTAMP, consumerRecord.timestamp())
+                .setHeader(KafkaHeaders.KEY, consumerRecord.key())
                 .build();
     }
 }

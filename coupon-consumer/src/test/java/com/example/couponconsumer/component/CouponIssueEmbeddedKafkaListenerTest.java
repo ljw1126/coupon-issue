@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -35,6 +36,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@Tag("embedded")
 @ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, topics = {"coupon"}, brokerProperties = {"listeners=PLAINTEXT://localhost:9094", "port=9094"})
 @SpringBootTest

@@ -8,10 +8,7 @@ import com.example.couponcore.model.CouponType;
 import com.example.couponcore.repository.mysql.CouponJpaRepository;
 import com.example.couponcore.utils.KafkaOutputDestination;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
@@ -28,6 +25,7 @@ import static com.example.couponcore.utils.MyAssertions.assertCouponIssueEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+@Tag("integration")
 class AsyncCouponIssueServiceV2Test extends TestConfig {
 
     @Autowired
